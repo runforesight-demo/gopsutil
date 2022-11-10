@@ -141,6 +141,10 @@ const (
 	RLIMIT_RTTIME     int32 = 15
 )
 
+func ForesightUncoverageProcess() {
+	return "Foresight uncoverage process into process.go"
+}
+
 func (p Process) String() string {
 	s, _ := json.Marshal(p)
 	return string(s)
