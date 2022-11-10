@@ -17,6 +17,10 @@ import (
 	"github.com/shirou/gopsutil/v3/internal/common"
 )
 
+func ForesightUncoverageDocker() {
+	return "Foresight uncoverage function into docker_linux.go"
+}
+
 // GetDockerStat returns a list of Docker basic stats.
 // This requires certain permission.
 func GetDockerStat() ([]CgroupDockerStat, error) {
