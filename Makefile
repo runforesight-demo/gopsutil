@@ -13,27 +13,27 @@ check:  ## Check
 BUILD_FAIL_PATTERN=grep -v "exec format error" | grep "build failed" && exit 1 || exit 0
 build_test:  ## test only buildable
 	# Supported operating systems
-	GOOS=linux GOARCH=amd64 go test ./... | $(BUILD_FAIL_PATTERN)
-	GOOS=linux GOARCH=386 go test ./... | $(BUILD_FAIL_PATTERN)
-	GOOS=linux GOARCH=arm go test ./... | $(BUILD_FAIL_PATTERN)
-	GOOS=linux GOARCH=arm64 go test ./... | $(BUILD_FAIL_PATTERN)
-	GOOS=linux GOARCH=riscv64 go test ./... | $(BUILD_FAIL_PATTERN)
-	GOOS=freebsd GOARCH=amd64 go test ./... | $(BUILD_FAIL_PATTERN)
-	GOOS=freebsd GOARCH=386 go test ./... | $(BUILD_FAIL_PATTERN)
-	GOOS=freebsd GOARCH=arm go test ./... | $(BUILD_FAIL_PATTERN)
-	GOOS=freebsd GOARCH=arm64 go test ./... | $(BUILD_FAIL_PATTERN)
-	CGO_ENABLED=0 GOOS=darwin go test ./... | $(BUILD_FAIL_PATTERN)
-	GOOS=windows go test ./... | $(BUILD_FAIL_PATTERN)
+	GOOS=linux GOARCH=amd64 go test -v -json ./... > ./test-report-linux-amd64.json -coverprofile=coverage-linux-amd64.out | $(BUILD_FAIL_PATTERN)
+	GOOS=linux GOARCH=386 go test -v -json ./... > ./test-report-linux-386.json -coverprofile=coverage-linux-386.out | $(BUILD_FAIL_PATTERN)
+	GOOS=linux GOARCH=arm go test -v -json ./... > ./test-report-linux-arm.json -coverprofile=coverage-linux-arm.out | $(BUILD_FAIL_PATTERN)
+	GOOS=linux GOARCH=arm64 go test -v -json ./... > ./test-report-linux-arm64.json -coverprofile=coverage-linux-arm64.out | $(BUILD_FAIL_PATTERN)
+	GOOS=linux GOARCH=riscv64 go test -v -json ./... > ./test-report-linux-riscv64.json -coverprofile=coverage-linux-riscv64.out | $(BUILD_FAIL_PATTERN)
+	GOOS=freebsd GOARCH=amd64 go test -v -json ./... > ./test-report-freebsd-amd64.json -coverprofile=coverage-freebsd-amd64.out | $(BUILD_FAIL_PATTERN)
+	GOOS=freebsd GOARCH=386 go test -v -json ./... > ./test-report-freebsd-386.json -coverprofile=coverage-freebsd-386.out | $(BUILD_FAIL_PATTERN)
+	GOOS=freebsd GOARCH=arm go test -v -json ./... > ./test-report-freebsd-arm.json -coverprofile=coverage-freebsd-arm.out | $(BUILD_FAIL_PATTERN)
+	GOOS=freebsd GOARCH=arm64 go test -v -json ./... > ./test-report-freebsd-arm64.json -coverprofile=coverage-freebsd-arm64.out | $(BUILD_FAIL_PATTERN)
+	CGO_ENABLED=0 GOOS=darwin go test -v -json ./... > ./test-report-darwin.json -coverprofile=coverage-drawin-enabled.out | $(BUILD_FAIL_PATTERN)
+	GOOS=windows go test ./... > ./test-report-windows.json -coverprofile=coverage-windows.out | $(BUILD_FAIL_PATTERN)
 	# Operating systems supported for building only (not implemented error if used)
-	GOOS=solaris go test ./... | $(BUILD_FAIL_PATTERN)
-	GOOS=dragonfly go test ./... | $(BUILD_FAIL_PATTERN)
-	GOOS=netbsd go test ./... | $(BUILD_FAIL_PATTERN)
+	GOOS=solaris go test ./... > ./test-report-solaris.json -coverprofile=coverage-solaris.out | $(BUILD_FAIL_PATTERN)
+	GOOS=dragonfly go test ./... > ./test-report-dragonfly.json -coverprofile=coverage-dragonfly.out | $(BUILD_FAIL_PATTERN)
+	GOOS=netbsd go test ./... > ./test-report-netbsd.json -coverprofile=coverage-netbsd.out | $(BUILD_FAIL_PATTERN)
 	# cross build to OpenBSD not worked since process has "C"
 #	GOOS=openbsd go test ./... | $(BUILD_FAIL_PATTERN)
-	GOOS=plan9 go test ./... | $(BUILD_FAIL_PATTERN)
+	GOOS=plan9 go test ./... > ./test-report-plan9.json -coverprofile=coverage-plan9.out | $(BUILD_FAIL_PATTERN)
 
 ifeq ($(shell uname -s), Darwin)
-	CGO_ENABLED=1 GOOS=darwin go test ./... | $(BUILD_FAIL_PATTERN)
+	CGO_ENABLED=1 GOOS=darwin go test -v -json ./... > ./test-report-darwin-enabled.json -coverprofile=coverage-darwin-enabled.out | $(BUILD_FAIL_PATTERN)
 endif
 	@echo 'Successfully built on all known operating systems'
 
@@ -73,8 +73,8 @@ vet:
 	GOOS=plan9 GOARCH=386 go vet ./...
 
 macos_test:
-	CGO_ENABLED=0 GOOS=darwin go test ./... | $(BUILD_FAIL_PATTERN)
-	CGO_ENABLED=1 GOOS=darwin go test ./... | $(BUILD_FAIL_PATTERN)
+	CGO_ENABLED=0 GOOS=darwin go test -v -json ./... > ./test-report.json -coverprofile=coverage-macos-disable.out | $(BUILD_FAIL_PATTERN)
+	CGO_ENABLED=1 GOOS=darwin go test -v -json ./... > ./test-report.json -coverprofile=coverage-macos-enabled.out | $(BUILD_FAIL_PATTERN)
 
 init_tools:
 	go get github.com/golang/dep/cmd/dep
