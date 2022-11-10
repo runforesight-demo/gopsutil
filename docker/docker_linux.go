@@ -17,7 +17,7 @@ import (
 	"github.com/shirou/gopsutil/v3/internal/common"
 )
 
-func ForesightUncoverageDocker() {
+func ForesightUncoverageDocker() string {
 	return "Foresight uncoverage function into docker_linux.go"
 }
 
