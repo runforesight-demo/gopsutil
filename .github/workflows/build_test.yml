@@ -1,7 +1,16 @@
-on: [push, pull_request]
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - master
+      
 name: Build Test
 permissions:
   contents: read
+  
+env:
+  FORESIGHT_UPLOADER_SIGNER_URL: https://upload.service.runforesight.us
+  WORKFLOW_TELEMETRY_BASE_URL: https://api.service.runforesight.us
 
 jobs:
   go-versions:
@@ -21,6 +30,11 @@ jobs:
         go-version: ${{fromJson(needs.go-versions.outputs.versions)}}
     runs-on: ubuntu-20.04
     steps:
+    - name: Collect Workflow Telemetry
+      if: always()
+      uses: runforesight/foresight-workflow-kit-action@v1
+      with:
+        api_key: ${{ secrets.FORESIGHT_PROJECT_WALL_APIKEY }}
     - name: Install Go
       uses: actions/setup-go@v3
       with:
@@ -42,3 +56,15 @@ jobs:
     - name: Build Test v3
       run: |
         make build_test
+
+    - name: Analyze Test and/or Coverage Results
+      if: always()
+      uses: runforesight/foresight-test-kit-action@v1
+      with:
+        api_key: ${{ secrets.FORESIGHT_PROJECT_WALL_APIKEY }}
+        test_framework: golang
+        test_format: json
+        test_path: ./test-report.json
+        coverage_format: golang
+        coverage_path: |
+            coverage.out
